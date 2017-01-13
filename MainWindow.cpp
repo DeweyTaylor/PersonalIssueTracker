@@ -13,7 +13,7 @@ BRect rect(100,100,740,580);
 
 MainWindow::MainWindow()
 	:
-	BWindow(rect, "PIT v00.00.07 ©2010", B_TITLED_WINDOW,B_WILL_DRAW)
+	BWindow(rect, "PIT v00.00.07 ©2010-2017", B_TITLED_WINDOW,B_WILL_DRAW)
 {
 	db = NULL;
 	fw = NULL;
@@ -98,6 +98,7 @@ void MainWindow::MessageReceived(BMessage* message)
 	{
 		case NEWPROJECT_MSG:
 		{
+//printf("a\n");
 			BMessenger target(this);
 			BFilePanel *SavePanel = new BFilePanel(B_SAVE_PANEL, &target, NULL, 0, false, NULL, NULL, true, true);
 			SavePanel->Show();
@@ -105,6 +106,7 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case OPENPROJECT_MSG:
 		{
+//printf("b\n");
 			BMessenger target(this);
 			BFilePanel *OpenPanel = new BFilePanel(B_OPEN_PANEL, &target, NULL, B_FILE_NODE, false, NULL, NULL, true, true);
 			OpenPanel->Show();
@@ -112,11 +114,13 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case EXIT_MSG:
 		{
+//printf("c\n");
 			QuitRequested();
 			break;
 		}
 		case NEWTICKET_MSG:
 		{
+//printf("d\n");
 			// create a new ticket window and display it
 			TicketWindow *x = new TicketWindow(NULL, this);
 			x->Show();
@@ -124,11 +128,13 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case MODIFYTICKET_MSG:
 		{
+//printf("e\n");
 			PostMessage(new BMessage(INVOKETICKET_MSG));
 			break;
 		}
 		case DELETETICKET_MSG:
 		{
+//printf("f\n");
 			// get the currently selected ticket and run a query to delete it
 			TicketRow *selected = (TicketRow*)vwMain->TLMain->CurrentSelection();
 			if (selected == NULL)
@@ -150,35 +156,41 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case ABOUT_MSG:
 		{
+//printf("g\n");
 			AboutWindow *a = new AboutWindow();
 			a->Show();
 			break;
 		}
 		case B_SAVE_REQUESTED:
 		{
+//printf("h\n");
 			_CreateNewProject(message);
 			break;
 		}
 		case B_REFS_RECEIVED:
 		{
+//printf("i\n");
 			// open project
 			_OpenProject(message);
 			break;
 		}
 		case FILTER_MSG:
 		{
+//printf("j\n");
 			fw = new FilterWindow(this);
 			fw->Show();
 			break;
 		}
 		case SETFILTER_MSG:
 		{
+//printf("k\n");
 			_BuildFilterQuery();
 			_UpdateListView();
 			break;
 		}
 		case UPDATETICKET_MSG:
 		{
+//printf("l\n");
 			// there was a pointer around here somewhere...
 			// if ticket->id == 0 then insert a new ticket, otherwise update an existing one
 			TicketData *ticket;
@@ -207,6 +219,7 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case INVOKETICKET_MSG:
 		{
+//printf("m\n");
 			TicketRow *selected = (TicketRow*)vwMain->TLMain->CurrentSelection();
 			if (selected == NULL)
 			{
@@ -232,12 +245,14 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case SHOWCLASS_MSG:
 		{
+//printf("n\n");
 			ClassModWindow *tempwind = new ClassModWindow(this);
 			tempwind->Show();
 			break;
 		}
 		case UPDATECLS_MSG:
 		{
+printf("o\n");
 			ClsDataNode *tempnode = ComponentList;
 			while(tempnode)
 			{
@@ -246,22 +261,29 @@ void MainWindow::MessageReceived(BMessage* message)
 					if (!tempnode->delflag) // ignore deleted new nodes
 					{
 						// insert new row
-						char* ErrorMsg;
+						char* ErrorMsg = NULL;
 						if (sqlite3_exec(db, sqlite3_mprintf("INSERT INTO Component (title) VALUES (%Q)", tempnode->name), NULL, NULL, &ErrorMsg) != 0)
 							printf("Error!\n");
-						printf("%s\n", ErrorMsg);
+						if (ErrorMsg != NULL)
+						{
+							printf("%s\n", ErrorMsg);
+						}
 					}
 				}
 				else if (tempnode->delflag) // delete items...
 				{
 					// remove rows
-					char* ErrorMsg;
+					char* ErrorMsg = NULL;
 					if (sqlite3_exec(db, sqlite3_mprintf("DELETE FROM Component WHERE id = %d;", tempnode->id), NULL, NULL, &ErrorMsg) != 0)
 						printf("Error!\n");
-					printf("%s\n", ErrorMsg);
+					if (ErrorMsg != NULL)
+					{
+						printf("%s\n", ErrorMsg);
+					}
 				}
 				tempnode = tempnode->Next;
 			}
+printf("ms\n");
 			tempnode = MilestoneList;
 			while(tempnode)
 			{
@@ -270,23 +292,30 @@ void MainWindow::MessageReceived(BMessage* message)
 					if (!tempnode->delflag) // ignore deleted new nodes
 					{
 						// insert new row
-						char* ErrorMsg;
+						char* ErrorMsg = NULL;
 						if (sqlite3_exec(db, sqlite3_mprintf("INSERT INTO Milestone (title) VALUES (%Q)", tempnode->name), NULL, NULL, &ErrorMsg) != 0)
 							printf("Error!\n");
-						printf("%s\n", ErrorMsg);
+						if (ErrorMsg != NULL)
+						{
+							printf("%s\n", ErrorMsg);
+						}
 					}
 				}
 				else if (tempnode->delflag) // delete items...
 				{
 					// remove rows
-					char* ErrorMsg;
+					char* ErrorMsg = NULL;
 					if (sqlite3_exec(db, sqlite3_mprintf("DELETE FROM Milestone WHERE id = %d;", tempnode->id), NULL, NULL, &ErrorMsg) != 0)
 						printf("Error!\n");
-					printf("%s\n", ErrorMsg);
+					if (ErrorMsg != NULL)
+					{
+						printf("%s\n", ErrorMsg);
+					}
 				}
 				tempnode = tempnode->Next;
 			}
 			// update the stuff...
+printf("updatelst\n");
 			UpdateClsDataLists();
 			// verify tickets
 //******************************************** DO THIS!
@@ -297,18 +326,25 @@ void MainWindow::MessageReceived(BMessage* message)
 // UPDATE Tickets SET component = 0 WHERE component NOT IN (SELECT id FROM Component);
 			char* query = "UPDATE Tickets SET component = 0 WHERE component NOT IN (SELECT id FROM Component);";
 			char* query2 = "UPDATE Tickets SET milestone = 0 WHERE milestone NOT IN (SELECT id FROM Milestone);";
-			char* ErrorMsg;
+			char* ErrorMsg = NULL;
 			if(sqlite3_exec(db, query, NULL, NULL, &ErrorMsg)!=0)
 			{
 				printf("Error executing query!\n");
 			}
-			printf("%s\n", ErrorMsg);
+			if (ErrorMsg != NULL)
+			{
+				printf("%s\n", ErrorMsg);
+			}
 			if(sqlite3_exec(db, query2, NULL, NULL, &ErrorMsg)!=0)
 			{
 				printf("Error executing query!\n");
 			}
-			printf("%s\n", ErrorMsg);
+			if (ErrorMsg != NULL)
+			{
+				printf("%s\n", ErrorMsg);
+			}
 			// update the display
+printf("updatelv\n");
 			_UpdateListView();
 			break;
 		}
@@ -602,14 +638,18 @@ MainWindow::_UpdateListView()
 	vwMain->TLMain->RemoveAll();
 	// run the query
 	char* ErrorMsg = NULL;
-	CallbackData* cbd;
+	CallbackData* cbd = new CallbackData();
 	cbd->caller = this;
 	cbd->action = DB_UPDATELIST;
 	if (sqlite3_exec(db, fFilterQuery, db_GetTicket , cbd, &ErrorMsg) != 0)
 	{
 		printf("Error in update!");
 	}
-	printf("%s\n", ErrorMsg);
+	delete cbd;
+	if (ErrorMsg != NULL)
+	{
+		printf("%s\n", ErrorMsg);
+	}
 }
 
 
