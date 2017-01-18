@@ -61,13 +61,13 @@ FilterWindow::FilterWindow(BWindow *mainwin) :
 	view->AddChild(strComponent);
 	view->AddChild(strFilter);
 
-	lstFilter->SetSelectionMessage(new BMessage(FILTERCHANGED_MSG));
-	lstStatus->SetSelectionMessage(new BMessage(STATUSCHANGED_MSG));
-	lstType->SetSelectionMessage(new BMessage(TYPECHANGED_MSG));
-	lstPriority->SetSelectionMessage(new BMessage(PRIORITYCHANGED_MSG));
-	lstResolution->SetSelectionMessage(new BMessage(RESOLUTIONCHANGED_MSG));
-	lstComponent->SetSelectionMessage(new BMessage(COMPONENTCHANGED_MSG));
-	lstMilestone->SetSelectionMessage(new BMessage(MILESTONECHANGED_MSG));
+	lstFilter->SetInvocationMessage(new BMessage(FILTERCHANGED_MSG));
+	lstStatus->SetInvocationMessage(new BMessage(STATUSCHANGED_MSG));
+	lstType->SetInvocationMessage(new BMessage(TYPECHANGED_MSG));
+	lstPriority->SetInvocationMessage(new BMessage(PRIORITYCHANGED_MSG));
+	lstResolution->SetInvocationMessage(new BMessage(RESOLUTIONCHANGED_MSG));
+	lstComponent->SetInvocationMessage(new BMessage(COMPONENTCHANGED_MSG));
+	lstMilestone->SetInvocationMessage(new BMessage(MILESTONECHANGED_MSG));
 
 	UpdateFilterView();
 }
