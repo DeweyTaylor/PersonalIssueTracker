@@ -1,6 +1,6 @@
 /*
 	app.h
-	(c)2010 James Dewey Taylor
+	(c)2010-2017 James Dewey Taylor
 */
 
 #ifndef _APP_H_

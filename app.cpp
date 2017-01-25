@@ -33,6 +33,8 @@ app::ReadyToRun()
 void
 app::RefsReceived(BMessage* message)
 {
+	//BAlert* alert = new BAlert("Message", (const char*)message->what, "Ok");
+	//alert->Go();
 	if(!mainwindow)
 	{
 		mainwindow = new MainWindow();
@@ -44,6 +46,7 @@ app::RefsReceived(BMessage* message)
 void
 app::InstallMimeType()
 {
+	printf("InstallMimeType()\n");
 	BString filemimetype = APP_SIG;
 	filemimetype << ".file";
 	BMimeType mt(filemimetype.String());
@@ -63,7 +66,7 @@ app::InstallMimeType()
 
 	BPath mypath(ii.name);
 	entry_ref theref;
-//printf("path: %s\n", mypath.Path());
+printf("path: %s\n", mypath.Path());
 	get_ref_for_path(mypath.Path(), &theref);
 
 	mt.SetAppHint(&theref);

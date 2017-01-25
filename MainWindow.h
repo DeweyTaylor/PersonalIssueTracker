@@ -116,6 +116,7 @@ class MainWindow : public BWindow
 		void				_UpdateListView();
 		BPath				filepath;
 		void				SetFileMimeType(BPath);
+		BString				fProjectName;
 };
 
 #endif

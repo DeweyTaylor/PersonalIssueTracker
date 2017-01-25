@@ -1,6 +1,6 @@
 /*
 	MainWindow.cpp
-	(c) 2010 James Dewey Taylor
+	(c) 2010-2017 James Dewey Taylor
 */
 #include <cstdlib>
 #include "MainWindow.h"
@@ -98,7 +98,6 @@ void MainWindow::MessageReceived(BMessage* message)
 	{
 		case NEWPROJECT_MSG:
 		{
-//printf("a\n");
 			BMessenger target(this);
 			BFilePanel *SavePanel = new BFilePanel(B_SAVE_PANEL, &target, NULL, 0, false, NULL, NULL, true, true);
 			SavePanel->Show();
@@ -106,7 +105,6 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case OPENPROJECT_MSG:
 		{
-//printf("b\n");
 			BMessenger target(this);
 			BFilePanel *OpenPanel = new BFilePanel(B_OPEN_PANEL, &target, NULL, B_FILE_NODE, false, NULL, NULL, true, true);
 			OpenPanel->Show();
@@ -114,13 +112,11 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case EXIT_MSG:
 		{
-//printf("c\n");
 			QuitRequested();
 			break;
 		}
 		case NEWTICKET_MSG:
 		{
-//printf("d\n");
 			// create a new ticket window and display it
 			TicketWindow *x = new TicketWindow(NULL, this);
 			x->Show();
@@ -128,13 +124,11 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case MODIFYTICKET_MSG:
 		{
-//printf("e\n");
 			PostMessage(new BMessage(INVOKETICKET_MSG));
 			break;
 		}
 		case DELETETICKET_MSG:
 		{
-//printf("f\n");
 			// get the currently selected ticket and run a query to delete it
 			TicketRow *selected = (TicketRow*)vwMain->TLMain->CurrentSelection();
 			if (selected == NULL)
@@ -156,41 +150,35 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case ABOUT_MSG:
 		{
-//printf("g\n");
 			AboutWindow *a = new AboutWindow();
 			a->Show();
 			break;
 		}
 		case B_SAVE_REQUESTED:
 		{
-//printf("h\n");
 			_CreateNewProject(message);
 			break;
 		}
 		case B_REFS_RECEIVED:
 		{
-//printf("i\n");
 			// open project
 			_OpenProject(message);
 			break;
 		}
 		case FILTER_MSG:
 		{
-//printf("j\n");
 			fw = new FilterWindow(this);
 			fw->Show();
 			break;
 		}
 		case SETFILTER_MSG:
 		{
-//printf("k\n");
 			_BuildFilterQuery();
 			_UpdateListView();
 			break;
 		}
 		case UPDATETICKET_MSG:
 		{
-//printf("l\n");
 			// there was a pointer around here somewhere...
 			// if ticket->id == 0 then insert a new ticket, otherwise update an existing one
 			TicketData *ticket;
@@ -219,7 +207,6 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case INVOKETICKET_MSG:
 		{
-//printf("m\n");
 			TicketRow *selected = (TicketRow*)vwMain->TLMain->CurrentSelection();
 			if (selected == NULL)
 			{
@@ -245,14 +232,12 @@ void MainWindow::MessageReceived(BMessage* message)
 		}
 		case SHOWCLASS_MSG:
 		{
-//printf("n\n");
 			ClassModWindow *tempwind = new ClassModWindow(this);
 			tempwind->Show();
 			break;
 		}
 		case UPDATECLS_MSG:
 		{
-printf("o\n");
 			ClsDataNode *tempnode = ComponentList;
 			while(tempnode)
 			{
@@ -283,7 +268,6 @@ printf("o\n");
 				}
 				tempnode = tempnode->Next;
 			}
-printf("ms\n");
 			tempnode = MilestoneList;
 			while(tempnode)
 			{
@@ -315,7 +299,6 @@ printf("ms\n");
 				tempnode = tempnode->Next;
 			}
 			// update the stuff...
-printf("updatelst\n");
 			UpdateClsDataLists();
 			// verify tickets
 //******************************************** DO THIS!
@@ -344,7 +327,6 @@ printf("updatelst\n");
 				printf("%s\n", ErrorMsg);
 			}
 			// update the display
-printf("updatelv\n");
 			_UpdateListView();
 			break;
 		}
@@ -579,6 +561,9 @@ SetFileMimeType(path);
 	vwMain->btnFilter->SetEnabled(true);
 	vwMain->btnNewTicket->SetEnabled(true);
 	fTicketMenu->SetEnabled(true);
+
+	// set the window title to the project name (filename)
+	SetTitle(path.Leaf());
 	return B_OK;
 }
 
